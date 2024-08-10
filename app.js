@@ -2,7 +2,7 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
-const loginModel = require("./admin")
+const loginModel = require("./models/admin")
 const app = express()
 
 app.use(cors())
@@ -14,7 +14,7 @@ app.get("/test",(req,res)=>{
     res.json({"status":"success"})
 })
 
-app.post("/adminsignup",(req,res)=>{
+app.post("/adminSignUp",(req,res)=>{
     let input = req.body
     let hashedpassword = bcrypt.hashSync(input.password,10)
     input.password = hashedpassword
