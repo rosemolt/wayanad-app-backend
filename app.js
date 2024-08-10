@@ -24,6 +24,24 @@ app.post("/adminSignUp",(req,res)=>{
     res.json({"status":"success"}) 
 })
 
+app.post("/adminSignIn",(req,res)=>{
+    let input = req.body
+    let result = loginModel.find({username:input.username}).then(
+        (response)=>{
+            if (response.length>0) {
+                const validator = bcrypt.compareSync(input.password,response[0].password)
+                if (validator) {
+                    res.json({"status":"success"})
+                } else {
+                    res.json({"status":"wrong password"})
+                }
+            } else {
+                res.json({"status":"username doesn't exist"})
+            }
+        }
+    ).catch()
+})
+
 app.listen(5050,()=>{
     console.log("server started")
 })
