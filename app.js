@@ -2,7 +2,9 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const loginModel = require("./models/admin")
+const peopleModel = require("./models/missingPeople")
 const app = express()
 
 app.use(cors())
@@ -52,7 +54,18 @@ app.post("/adminSignIn",(req,res)=>{
 
 app.post("/addPeople",(req,res)=>{
     let input = req.body
-    
+    let token = req.headers.token
+    jwt.verify(token,"rescue-app",
+        (error,decoded)=>{
+            if (decoded && decoded.email) {
+                let result = new peopleModel(input)
+                result.save()
+                res.json({"status":"success"})
+            } else {
+                res.json({"status":"Failed to register"})
+            }
+        }
+    )
 })
 
 app.listen(5050,()=>{

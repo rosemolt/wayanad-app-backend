@@ -7,7 +7,7 @@ const peopleSchema = mongoose.Schema(
         place:String,
         pincode:String,
         houseNumber:String,
-        missingDate:String,
+        missingDate:Date,
         aadharNumber:String,
         gender:String,
         age:String
