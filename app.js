@@ -42,6 +42,11 @@ app.post("/adminSignIn",(req,res)=>{
     ).catch()
 })
 
+app.post("/addPeople",(req,res)=>{
+    let input = req.body
+    
+})
+
 app.listen(5050,()=>{
     console.log("server started")
 })
