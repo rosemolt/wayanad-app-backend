@@ -2,7 +2,9 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const loginModel = require("./models/admin")
+const peopleModel = require("./models/missingPeople")
 const app = express()
 
 app.use(cors())
@@ -31,7 +33,15 @@ app.post("/adminSignIn",(req,res)=>{
             if (response.length>0) {
                 const validator = bcrypt.compareSync(input.password,response[0].password)
                 if (validator) {
-                    res.json({"status":"success"})
+                    jwt.sign({email:input.username},"rescue-app",{expiresIn:"1d"},
+                        (error,token)=>{
+                            if(error){
+                                res.json({"status":"Invalid Authentication"})
+                            }else{
+                               res.json({"status":"success","token":token}) 
+                            }
+                        }
+                    )
                 } else {
                     res.json({"status":"wrong password"})
                 }
@@ -44,7 +54,18 @@ app.post("/adminSignIn",(req,res)=>{
 
 app.post("/addPeople",(req,res)=>{
     let input = req.body
-    
+    let token = req.headers.token
+    jwt.verify(token,"rescue-app",
+        (error,decoded)=>{
+            if (decoded && decoded.email) {
+                let result = new peopleModel(input)
+                result.save()
+                res.json({"status":"success"})
+            } else {
+                res.json({"status":"Failed to register"})
+            }
+        }
+    )
 })
 
 app.listen(5050,()=>{
