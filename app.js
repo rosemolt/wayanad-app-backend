@@ -31,7 +31,15 @@ app.post("/adminSignIn",(req,res)=>{
             if (response.length>0) {
                 const validator = bcrypt.compareSync(input.password,response[0].password)
                 if (validator) {
-                    res.json({"status":"success"})
+                    jwt.sign({email:input.username},"rescue-app",{expiresIn:"1d"},
+                        (error,token)=>{
+                            if(error){
+                                res.json({"status":"Invalid Authentication"})
+                            }else{
+                               res.json({"status":"success","token":token}) 
+                            }
+                        }
+                    )
                 } else {
                     res.json({"status":"wrong password"})
                 }
